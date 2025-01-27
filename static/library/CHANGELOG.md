@@ -9,6 +9,7 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [library.10] - Q1/2025
 
 ### Changed
+Jan-27 - Added Germany. Germanys Licensee is checking it over now. Also copied wordpress website wwfm-dsap.com to gatsby/ghost cms which will be live soon  
 Jan-12 - Trying to include a serverless referral marketing system  
 Jan-08 - Put the loader into the status, but remotely I think there's an issue with cloudflare rocket blocking the script  
 Jan-07 - On this 7th day, I am adding a flag to the data,and revising 1.sh,2.sh and 3.sh to only fetch directories of signed administrative divisions. Pulling them all is too huge for the interim framework e.g. github monorepo (will need to circle back to solve scaling e.g. impliment IPFS or something    

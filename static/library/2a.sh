@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Function to check if a Python package is installed
+check_and_install_python_package() {
+    PACKAGE_NAME=$1
+    python3 -c "import $PACKAGE_NAME" &>/dev/null
+
+    if [ $? -ne 0 ]; then
+        echo "$PACKAGE_NAME not found. Installing..."
+        pip3 install $PACKAGE_NAME
+    else
+        echo "$PACKAGE_NAME is already installed."
+    fi
+}
+
+# Check for openpyxl and install if necessary
+check_and_install_python_package "openpyxl"
+
 # Input file (passed as an argument)
 INPUT_XLSX="$1"
 
@@ -61,18 +77,13 @@ for sheet in wb.worksheets:
     level_hierarchy = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list))))
 
     for row in sheet.iter_rows(min_row=2):
-        # Read columns A-G (first seven columns)
+        # Read columns A-F (first six columns)
         name1 = row[0].value.strip() if row[0].value else None
         name2 = row[1].value.strip() if row[1].value else None
         name3 = row[2].value.strip() if row[2].value else None
         name4 = row[3].value.strip() if row[3].value else None
         name5 = row[4].value.strip() if row[4].value else None
         uid = row[5].value.strip() if row[5].value else None
-        include_row = row[6].value.strip().lower() == "y" if row[6].value else False
-
-        # Skip rows that don't have "y" in column G
-        if not include_row:
-            continue
 
         # Build hierarchy, modifying UIDs for each level
         if name1:
@@ -157,4 +168,3 @@ python3 "$PYTHON_SCRIPT"
 rm "$PYTHON_SCRIPT"
 
 echo "JSON generation completed."
-
