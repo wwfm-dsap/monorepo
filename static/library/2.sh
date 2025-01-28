@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Function to check if a Python package is installed
+check_and_install_python_package() {
+    PACKAGE_NAME=$1
+    python3 -c "import $PACKAGE_NAME" &>/dev/null
+
+    if [ $? -ne 0 ]; then
+        echo "$PACKAGE_NAME not found. Installing..."
+        pip3 install $PACKAGE_NAME
+    else
+        echo "$PACKAGE_NAME is already installed."
+    fi
+}
+
+# Check for openpyxl and install if necessary
+check_and_install_python_package "openpyxl"
+
 # Input file (passed as an argument)
 INPUT_XLSX="$1"
 
