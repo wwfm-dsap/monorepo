@@ -264,13 +264,16 @@ function formatUID(uid, level, countryCode) {
     return uid;
 }
 
-// Fetch data and create accordion for countries
+// Fetch data and create accordion for countries in alphabetical order
 fetch('data.json')
     .then(response => response.json())
     .then(data => {
         let container = document.getElementById("accordionContainer");
         if (data && data.countries && data.countries.length > 0) {
-            data.countries.forEach((country, index) => {
+            // Sort countries by name (assuming name is the country code like 'de', 'uk', 'us')
+            let sortedCountries = data.countries.sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedCountries.forEach((country, index) => {
                 let countryLabel = document.createElement("label");
                 countryLabel.className = "accordion country-item";
 

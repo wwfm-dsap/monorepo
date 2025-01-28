@@ -6,8 +6,18 @@ check_and_install_python_package() {
     python3 -c "import $PACKAGE_NAME" &>/dev/null
 
     if [ $? -ne 0 ]; then
-        echo "$PACKAGE_NAME not found. Installing..."
-        pip3 install $PACKAGE_NAME
+        echo "$PACKAGE_NAME not found. Attempting to install..."
+        
+        # Try with pip3 first
+        if ! pip3 install $PACKAGE_NAME; then
+            echo "pip3 installation failed. Trying with pkg..."
+            if ! pkg install python3-$PACKAGE_NAME; then
+                echo "Failed to install $PACKAGE_NAME with both pip3 and pkg."
+                exit 1
+            fi
+        else
+            echo "$PACKAGE_NAME installed successfully with pip3."
+        fi
     else
         echo "$PACKAGE_NAME is already installed."
     fi
@@ -163,6 +173,12 @@ EOF
 
 # Run the Python script
 python3 "$PYTHON_SCRIPT"
+
+# Check if Python script execution was successful
+if [ $? -ne 0 ]; then
+    echo "Failed to execute Python script. Check for errors in the script or Python environment."
+    exit 1
+fi
 
 # Clean up
 rm "$PYTHON_SCRIPT"

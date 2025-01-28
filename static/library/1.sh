@@ -7,9 +7,19 @@ URL="https://docs.google.com/spreadsheets/d/13U87Sm6e6Fh1SWipl_y_Hi6r2zxfYLyTwjM
 TIMESTAMP=$(date +%s)
 TEMP_XLSX="temp_$TIMESTAMP.xlsx"
 DOWNLOAD_LOG="download_$TIMESTAMP.log"
-TARGET_DIR="/var/www/html/current/static/library"  # Adjust the target directory if necessary
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+TARGET_DIR="$SCRIPT_DIR/current/static/library"
 
-rm -r *.xlsx
+echo "Script directory: $SCRIPT_DIR"
+echo "Target directory: $TARGET_DIR"
+
+# Ensure the target directory exists and is writable
+mkdir -p "$TARGET_DIR"
+chmod -R u+w "$SCRIPT_DIR/current"
+
+# Remove any existing .xlsx files to avoid confusion
+rm -f *.xlsx
+
 # Download the XLSX file
 echo "Attempting to download from $URL"
 curl -f --location -v "$URL" -o "$TEMP_XLSX" 2>&1 | tee "$DOWNLOAD_LOG"
@@ -27,15 +37,8 @@ if [[ "$TEMP_XLSX" != *.xlsx ]]; then
     exit 1
 fi
 
-# Ensure the file is readable and the target directory is writable
+# Ensure the file is readable
 chmod +r "$TEMP_XLSX"
-
-# Fix the permissions for the target directory (to ensure write access for JSON output)
-chmod u+w "$TARGET_DIR"
-
-# Optionally, you can change the ownership of the downloaded XLSX and target directory to your user (if needed):
-# sudo chown $(whoami):$(whoami) "$TEMP_XLSX"
-# sudo chown -R $(whoami):$(whoami) "$TARGET_DIR"
 
 # Check if the target directory is writable for JSON output
 if [ ! -w "$TARGET_DIR" ]; then
@@ -59,4 +62,3 @@ if [ ! -f "$INPUT_XLSX" ]; then
     echo "File $INPUT_XLSX does not exist."
     exit 1
 fi
-
